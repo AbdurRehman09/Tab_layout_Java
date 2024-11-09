@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
                         productDB.open();
                         productDB.insert(title, date, Integer.parseInt(price));
                         productDB.close();
+                        // Current position save karein
+                        refreshAllFragments();
                         Toast.makeText(MainActivity.this, "Product Added", Toast.LENGTH_SHORT).show();
 
                     }
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-
+             dialog.show();
 
             }
         });
@@ -138,4 +140,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    public void refreshAllFragments() {
+        adapter = new ViewPagerAdapter(this);
+        vp2.setAdapter(adapter);// Stay on current tab
+    }
+
 }

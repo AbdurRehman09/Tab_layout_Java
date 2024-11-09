@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * Use the {@link NewOrderFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewOrderFragment extends Fragment {
+public class NewOrderFragment extends Fragment implements ProductUpdateListener {
 
     Context context;
     // TODO: Rename parameter arguments, choose names that match
@@ -31,6 +31,9 @@ public class NewOrderFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private ListView lvNewOrderList;
+    private ProductAdapter adapter;
+
     public NewOrderFragment() {
         // Required empty public constructor
     }
@@ -40,8 +43,6 @@ public class NewOrderFragment extends Fragment {
         super.onAttach(context);
         this.context = context;
     }
-
-
 
     /**
      * Use this factory method to create a new instance of
@@ -72,7 +73,7 @@ public class NewOrderFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_new_order, container, false);
     }
@@ -80,13 +81,22 @@ public class NewOrderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ListView lvNewOrderList = view.findViewById(R.id.lvNewOrdersList);
+        lvNewOrderList = view.findViewById(R.id.lvNewOrdersList);
+        loadProducts();
+    }
+
+    private void loadProducts() {
         ProductDB productDB = new ProductDB(context);
         productDB.open();
-        ArrayList<Product> products = productDB.fetchProducts();
+        ArrayList<Product> products = productDB.fetchProductsByStatus("new");
         productDB.close();
 
-        ProductAdapter adapter = new ProductAdapter(context, R.layout.product_item_design, products);
+        adapter = new ProductAdapter(context, R.layout.product_item_design, products, this);
         lvNewOrderList.setAdapter(adapter);
+    }
+
+    @Override
+    public void onProductUpdated() {
+        loadProducts();
     }
 }
